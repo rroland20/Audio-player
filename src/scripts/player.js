@@ -1,7 +1,34 @@
-function check_error(audioObj, callback) {
+function changeDisplay(id, opened) {
+    let display = opened ? 'flex' : 'none';
+    document.getElementById(id).style.display = display;
+}
+
+function printErrorMessage(audioObj) {
+    let main = document.getElementById('main');
+    var strError = document.createElement('output');
+    strError.classList.add("str_error");
+
+    if (audioObj.error.message == "MEDIA_ELEMENT_ERROR: Empty src attribute")
+        strError.value = "Please enter audio link";
+    else if (audioObj.error.message == "MEDIA_ELEMENT_ERROR: Format error")
+        strError.value = "Incorrect audio link";
+    main.appendChild(strError);
+}
+
+function onSubmit() {
+    if (!document.getElementById('input'))
+        document.getElementById('input2').id = "input";
+
+    let linkAudio = document.getElementById('input');
+    let audioObj = new Audio(linkAudio.value);
+
+    
+    audioObj.addEventListener('canplay', function() {
+        changeDisplay('main', false);
+        changeDisplay('player', true);
+    })
+
     audioObj.addEventListener('error', function() {
-        flag = true;
-        console.log(flag);
         // меняю стиль инпута
         let input_url = document.getElementById('input').id = "input2";
         // добавляю иконку ошибки
@@ -45,56 +72,24 @@ function check_error(audioObj, callback) {
             
             but.appendChild(item);
             inputPlace.appendChild(but);
-
-            
         }
-        
+
         // добавляю подпись с ошибкой
-        let main = document.getElementById('main');
-        let strError = document.createElement('output');
-        
-        strError.classList.add("str_error");
-        // console.log(audioObj.error.message);
-        if (audioObj.error.message == "MEDIA_ELEMENT_ERROR: Empty src attribute")
-        strError.value = "Please enter audio link";
-        else if (audioObj.error.message == "MEDIA_ELEMENT_ERROR: Format error")
-        strError.value = "Incorrect audio link";
-        main.appendChild(strError);
-    }, false);
-    if (strError)
-        callback();
-    // a.onload = () => callback();
-}
-
-document.getElementById('submit').onclick = function() {
-    if (!document.getElementById('input'))
-        document.getElementById('input2').id = "input";
-
-    let linkAudio = document.getElementById('input');
-    let audioObj = new Audio(linkAudio.value);
-
-    if (document.querySelector(".but_error")) {
-        let rm_icon = document.querySelector(".but_error");
-        let rm_str = document.querySelector(".str_error");
-        rm_icon.remove();
-        rm_str.remove();
-    }
-
-    var flag = false;
-    
-    check_error(audioObj, function() {
-        console.log(flag);
-        if (flag == false) {
-            change_display('main');
-            change_display('player');
+        if (!document.querySelector(".str_error"))
+            printErrorMessage(audioObj);
+        else {
+            document.querySelector(".str_error").remove();
+            printErrorMessage(audioObj);
         }
-    });
-
+            
+    }, false);
     // delete audioObj;
 }
 
-function change_display(id) {
-    let elem = document.getElementById(id);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM loaded");
 
-    elem.style.display = (getComputedStyle(elem).display == 'flex') ? 'none' : 'flex';
-}
+    let submitBtn = document.getElementById('submit');
+
+    submitBtn.addEventListener('click', onSubmit);
+});
