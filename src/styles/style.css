@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&display=swap');
+
+:root {
+    --white: #FFFFFF;
+    --bgr: #EEEEEE;
+    --font: 'Space Grotesk';
+    --placeholder: #A4A3A4;
+    --font_color: #1B191C;
+    --yellow: #F8D231;
+    --str_error: #C6A827;
+}
+
+html {
+    height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: auto;
+    background-color: var(--bgr);
+    font-family: var(--font);
+}
+
+/* Insert */
+#main {
+    display: flex;
+    flex-direction: column;
+    
+    margin: auto;
+    top: 50%;
+    width: 889px;
+    height: 162px;
+    position: relative;
+
+    padding: 0px;
+}
+
+#head {
+    position: absolute;
+    display: flex;
+    margin: 0px;
+    height: 52px;
+    width: 520px;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 52px;
+
+    letter-spacing: -1px;
+
+    color: var(--font_color);
+}
+
+.insert {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+
+    position: absolute;
+    width: 889px;
+    height: 96px;
+    left: 0px;
+    bottom: 0px;
+}
+
+#input_place {
+    background-color: var(--white);
+    padding: 0px;
+    width: 793px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+}
+
+#input {
+    flex-grow: 1;
+    margin: 32px 16px;
+    border: none;
+    min-width: 729px;
+    height: 32px;
+    font-family: var(--font);
+    outline:none;
+    color: var(--font_color);
+
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.4px;
+}
+
+#input#input2::-webkit-input-placeholder { color: var(--placeholder); }
+
+#submit {
+    width: 96px;
+    height: 96px;
+    border-radius: 0%;
+    border: none;
+    padding: 0px;
+    background-color: var(--yellow);
+}
+
+/* Error window */
+.but_error {
+    margin: 36px 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    border-radius: 0%;
+    border: none;
+    padding: 0px;
+    background-color: #fff;
+}
+
+#input2 {
+    flex-grow: 1;
+    margin: 32px 0px 32px 16px;
+    border: none;
+    width: 729px;
+    height: 32px;
+    font-family: var(--font);
+    outline:none;
+    color: var(--font_color);
+
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.4px;
+    
+}
+
+.str_error {
+    position: absolute;
+    top: 167px;
+    width: 793px;
+    height: 16px;
+    color: var(--str_error);
+
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.3px;
+}
+
+/* Player */
+#player {
+    display: none;
+}
