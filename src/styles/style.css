@@ -286,7 +286,13 @@ body {
     left: 0px;
     width: 33px;
     height: 16px;
-    outline: 1px solid blue;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.3px;
+    color: var(--font_color);
 }
 
 #widget_volume {

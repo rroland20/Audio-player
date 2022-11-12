@@ -23,6 +23,7 @@ function onSubmit() {
     let linkAudio = document.getElementById('input');
     let audioObj = new Audio(linkAudio.value);
     
+    // если ссылка валидная //
     audioObj.addEventListener('canplay', function() {
         let player = document.getElementById('player');
         let source = document.getElementById('source');
@@ -36,7 +37,7 @@ function onSubmit() {
         // добавляю текст источника //
         source.textContent = audioObj.currentSrc;
 
-        // реализация плеера //
+        // вставка объекта Audio в DOM //
         audioObj.setAttribute('id', "player_window");
         player.insertBefore(audioObj, widgetPlayer);
 
@@ -46,16 +47,19 @@ function onSubmit() {
             changeDisplay('.rect_pause2', false);
             changeDisplay('.path_play', true);
             audioObj.load();
+            stopwatch("reset");
         })
     })
 
+    // если произошла ошибка //
     audioObj.addEventListener('error', function() {
-        // меняю стиль инпута //
+        // меняю стиль ввода //
         let input_url = document.getElementById('input');
         if (input_url.classList.contains("input-ok")) {
             input_url.classList.remove("input-ok");
             input_url.classList.add("input-err");
         }
+
         // добавляю иконку ошибки //
         if (!document.querySelector(".but_error")) {
             let inputPlace = document.getElementById('input_place');
@@ -98,6 +102,7 @@ function onSubmit() {
             but.appendChild(item);
             inputPlace.appendChild(but);
         }
+
         // добавляю подпись с ошибкой //
         let strError = document.querySelector(".str_error");
 
@@ -107,6 +112,7 @@ function onSubmit() {
     }, false);
 }
 
+// начало загрузки страницы //
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM loaded");
     console.log("https://c5.radioboss.fm:18084/stream");
@@ -114,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let submitBtn = document.getElementById('submit');
     submitBtn.addEventListener('click', onSubmit);
+
+    // скрытие отображения ошибки при новом вводе //
     let input_url = document.getElementById('input');
 
     input_url.addEventListener('input', function() {
@@ -127,30 +135,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });    
 
+    // реализация плеера //
     let widgetPlayBtn = document.getElementById('widget_play');
 
     widgetPlayBtn.addEventListener('click', function() { // кнопка play
-        let timerShow = document.getElementById('widget_time');
         let audioObj = document.getElementById("player_window");
-        let timeMinut = (audioObj.duration / 60).toFixed(2);
+
         if (audioObj.paused) { // включение аудио
             changeDisplay('.rect_pause', true);
             changeDisplay('.rect_pause2', true);
             changeDisplay('.path_play', false);
             audioObj.play();
-            console.log(audioObj.duration);
-            console.log(audioObj);
+            stopwatch("play");
+            // console.log(audioObj.duration);
         }
         else { // выключение аудио
             changeDisplay('.rect_pause', false);
             changeDisplay('.rect_pause2', false);
             changeDisplay('.path_play', true);
             audioObj.pause();
+            stopwatch("pause");
         }
     });
-    let backBtn = document.getElementById('back');
 
     // кнопка назад //
+    let backBtn = document.getElementById('back');
+    
     backBtn.addEventListener('click', function() {
         let audioObj = document.getElementById("player_window");
 
@@ -165,6 +175,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         audioObj = null;
         delete audioObj;
-
     });
 });
+    
+var t;
+var sec = 0;
+var min = 0;
+
+function add() {
+    let timerShow = document.getElementById('widget_time');
+    // let audioObj = document.getElementById('player_window');
+    // let timeMinut = (audioObj.duration / 60).toFixed(2);
+    // let maxSec = timeMinut % 60;
+    // let maxMin = (timeMinut / 60).toFixed(0);
+    sec++;
+    if (sec >= 60) {
+        sec = 0;
+        min++;
+        if (min >= 99) {
+            min = 0;
+        }
+    }
+    timerShow.textContent = (min > 9 ? min : "0" + min) + ":" + (sec > 9 ? sec : "0" + sec);
+    timer();
+}
+
+function timer() {
+    t = setTimeout(add, 1000);
+}
+
+function stopwatch(value) {
+    switch (value) {
+        case 'play' :
+            timer();
+            break;
+        case 'pause' :
+            clearTimeout(t);
+            break;
+        case 'reset' :
+            let timerShow = document.getElementById('widget_time');
+            clearTimeout(t);
+            timerShow.textContent = "00:00";
+            sec = 0; min = 0;
+            break;
+        default:
+            console.log('Omagad');
+    }
+}
