@@ -108,22 +108,22 @@ function onSubmit() {
 
         if (strError)
             strError.remove();
-        addErrorElement(audioObj);
-    }, false);
-}
-
-// начало загрузки страницы //
-document.addEventListener('DOMContentLoaded', () => {
+            addErrorElement(audioObj);
+        }, false);
+    }
+    
+    // начало загрузки страницы //
+    document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM loaded");
     console.log("https://c5.radioboss.fm:18084/stream");
     console.log("https://lalalai.s3.us-west-2.amazonaws.com/media/split/a7564eb8-cbf2-40e2-9cb8-6061d8d055a7/no_vocals");
-
+    
     let submitBtn = document.getElementById('submit');
     submitBtn.addEventListener('click', onSubmit);
-
+    
     // скрытие отображения ошибки при новом вводе //
     let input_url = document.getElementById('input');
-
+    
     input_url.addEventListener('input', function() {
         if (this.classList.contains("input-err")) {
             this.classList.remove("input-err");
@@ -173,21 +173,35 @@ document.addEventListener('DOMContentLoaded', () => {
             changeDisplay('.path_play', true);
             audioObj.pause();
         }
+        stopwatch("reset");
         audioObj = null;
         delete audioObj;
     });
-});
+
+    // громкость //
+    let volumeRange = document.getElementById("widget_volume");
     
-var t;
+    volumeRange.addEventListener('input', function() {
+        let audioObj = document.getElementById("player_window");
+        let leftOfThumb = document.getElementById("volume_line");
+
+        audioObj.volume = this.value / 100;
+        leftOfThumb.style.width = (volumeRange.value * 2.52) + "px";
+    });
+    
+    // ползунок прогресса //
+    let trackLine = document.getElementById('widget_track_line');
+
+    trackLine.addEventListener('input', function() {
+        changeProgressLine();
+    });
+});
+
 var sec = 0;
 var min = 0;
 
 function add() {
     let timerShow = document.getElementById('widget_time');
-    // let audioObj = document.getElementById('player_window');
-    // let timeMinut = (audioObj.duration / 60).toFixed(2);
-    // let maxSec = timeMinut % 60;
-    // let maxMin = (timeMinut / 60).toFixed(0);
     sec++;
     if (sec >= 60) {
         sec = 0;
@@ -196,29 +210,47 @@ function add() {
             min = 0;
         }
     }
+    changeProgressLine();
     timerShow.textContent = (min > 9 ? min : "0" + min) + ":" + (sec > 9 ? sec : "0" + sec);
-    timer();
 }
 
-function timer() {
-    t = setTimeout(add, 1000);
-}
 
+let t;
 function stopwatch(value) {
     switch (value) {
         case 'play' :
-            timer();
+            t = setInterval(add, 1000);
             break;
         case 'pause' :
-            clearTimeout(t);
+            clearInterval(t);
             break;
         case 'reset' :
             let timerShow = document.getElementById('widget_time');
-            clearTimeout(t);
+            clearInterval(t);
             timerShow.textContent = "00:00";
             sec = 0; min = 0;
             break;
         default:
             console.log('Omagad');
     }
+}
+
+function changeProgressLine() {
+    let audioObj = document.getElementById('player_window');
+    // let maxMin = parseInt(audioObj.duration / 60);
+    // let maxSec = parseInt(audioObj.duration % 60);
+    let leftOfTheThumb = document.getElementById("track_line");
+    let trackLine = document.getElementById('widget_track_line');
+
+    trackLine.step = 100 / audioObj.duration;
+    let currentSec = audioObj.duration * trackLine.value / 100;
+    if (audioObj.play()) {
+        trackLine.value++;
+        audioObj.currentTime = currentSec;
+    } 
+
+    leftOfTheThumb.style.width = (trackLine.value * 5.8) + "px";
+    min = parseInt(currentSec / 60);
+    sec = parseInt(currentSec % 60);
+    
 }

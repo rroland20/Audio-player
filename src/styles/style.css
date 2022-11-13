@@ -262,6 +262,16 @@ body {
     cursor: pointer;
 }
 
+#track_line {
+    position: absolute;
+    top: 7px;
+    left: 2px;
+    height: 2px;
+    /* width: 12px; */
+    background-color: var(--white);
+    /* outline: 1px solid red; */
+}
+
 #widget_progress {
     position: absolute;
     top: 0px;
@@ -316,14 +326,21 @@ body {
     cursor: pointer;
 }
 
+#widget_volume::-moz-range-thumb {
+    appearance: none;
+    width: 16px;
+    height: 12px;
+    background: var(--black);
+    border: none;
+    cursor: pointer;
+}
 
 #volume_line {
     position: absolute;
-    top: 7px;
-    left: 328px;
-    width: 252px;
+    top: 9px;
+    left: 330px;
     height: 2px;
-    background-color: var(--white);
+    background-color: var(--black);
 }
 
 #volume_level {
