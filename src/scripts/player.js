@@ -1,3 +1,10 @@
+let audioControls = {
+    audio:          null,
+    timerShow:      null,
+    trackLine:      null,
+    trackPrevLine:  null,
+};
+
 function changeDisplay(id, opened) {
     let display = opened ? 'flex' : 'none';
     document.querySelector(id).style.display = display;
@@ -22,24 +29,52 @@ function addErrorElement(audioObj) {
 function onSubmit() {
     let linkAudio = document.getElementById('input');
     let audioObj = new Audio(linkAudio.value);
+    audioObj.volume = "0.4";
     
     // если ссылка валидная //
     audioObj.addEventListener('canplay', function() {
         let player = document.getElementById('player');
         let source = document.getElementById('source');
-        let widgetPlayer = document.getElementById('widget_player'); 
+        let widgetPlayer = document.getElementById('widget_player');
+        let leftOfTheThumb = document.getElementById("track_line");
+        let trackLine = document.getElementById('widget_track_line');
+        let timerShow = document.getElementById('widget_time');
 
+        audioControls.trackPrevLine = leftOfTheThumb;
+        audioControls.trackLine = trackLine;
+        audioControls.timerShow = timerShow;
+        
         // меняем видимость //
         changeDisplay('#main', false);
         changeDisplay('#player', true);
-        document.getElementById('input').value = "";
+        linkAudio.value = "";
 
         // добавляю текст источника //
         source.textContent = audioObj.currentSrc;
-
+        
         // вставка объекта Audio в DOM //
         audioObj.setAttribute('id', "player_window");
         player.insertBefore(audioObj, widgetPlayer);
+        audioControls.audio = audioObj;
+        
+        // установка громкости по умолчанию //
+        
+        // если это радио //
+        if (audioControls.audio.duration == "Infinity") {
+            audioControls.trackLine.setAttribute("disabled", "");
+            audioControls.trackLine.value = "100";
+            audioControls.trackPrevLine.style.width = "580px";
+        }
+        else {
+            if (audioControls.trackLine.hasAttribute("disabled"))
+                audioControls.trackLine.removeAttribute("disabled");
+        }
+
+        // Loader при буферизации //        
+        changeDisplay('#loader', false);
+        audioObj.addEventListener('waiting', function() {
+            changeDisplay('#loader', true);
+        });
 
         // если воспроизведение музыки закончилось //
         audioObj.addEventListener('ended', function() {
@@ -48,6 +83,8 @@ function onSubmit() {
             changeDisplay('.path_play', true);
             audioObj.load();
             stopwatch("reset");
+            audioControls.trackPrevLine.style.width = "0px";
+            audioControls.trackLine.value = "0";
         })
     })
 
@@ -110,10 +147,10 @@ function onSubmit() {
             strError.remove();
             addErrorElement(audioObj);
         }, false);
-    }
+}
     
-    // начало загрузки страницы //
-    document.addEventListener('DOMContentLoaded', () => {
+// начало загрузки страницы //
+document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM loaded");
     console.log("https://c5.radioboss.fm:18084/stream");
     console.log("https://lalalai.s3.us-west-2.amazonaws.com/media/split/a7564eb8-cbf2-40e2-9cb8-6061d8d055a7/no_vocals");
@@ -139,21 +176,18 @@ function onSubmit() {
     let widgetPlayBtn = document.getElementById('widget_play');
 
     widgetPlayBtn.addEventListener('click', function() { // кнопка play
-        let audioObj = document.getElementById("player_window");
-
-        if (audioObj.paused) { // включение аудио
+        if (audioControls.audio.paused) { // включение аудио
             changeDisplay('.rect_pause', true);
             changeDisplay('.rect_pause2', true);
             changeDisplay('.path_play', false);
-            audioObj.play();
+            audioControls.audio.play();
             stopwatch("play");
-            // console.log(audioObj.duration);
         }
         else { // выключение аудио
             changeDisplay('.rect_pause', false);
             changeDisplay('.rect_pause2', false);
             changeDisplay('.path_play', true);
-            audioObj.pause();
+            audioControls.audio.pause();
             stopwatch("pause");
         }
     });
@@ -162,47 +196,55 @@ function onSubmit() {
     let backBtn = document.getElementById('back');
     
     backBtn.addEventListener('click', function() {
-        let audioObj = document.getElementById("player_window");
-
-        audioObj.remove();
+        audioControls.audio.remove();
         changeDisplay('#main', true);
         changeDisplay('#player', false);
-        if (!audioObj.pause()) {
+        if (!audioControls.audio.pause()) {
             changeDisplay('.rect_pause', false);
             changeDisplay('.rect_pause2', false);
             changeDisplay('.path_play', true);
-            audioObj.pause();
+            audioControls.audio.pause();
         }
         stopwatch("reset");
-        audioObj = null;
-        delete audioObj;
+        audioControls.trackPrevLine.style.width = "0px";
+        audioControls.trackLine.value = "0";
+        let volumeRange = document.getElementById("widget_volume");
+        let leftOfThumb = document.getElementById("volume_line");
+        volumeRange.value = "40";
+        leftOfThumb.style.width = (volumeRange.value * 2.52) + "px";
+        audioControls.audio = null;
+        delete audioControls.audio;
     });
 
     // громкость //
     let volumeRange = document.getElementById("widget_volume");
-    
+
     volumeRange.addEventListener('input', function() {
-        let audioObj = document.getElementById("player_window");
         let leftOfThumb = document.getElementById("volume_line");
 
-        audioObj.volume = this.value / 100;
+        audioControls.audio.volume = this.value / 100;
         leftOfThumb.style.width = (volumeRange.value * 2.52) + "px";
     });
     
-    // ползунок прогресса //
+    // вручную меняем ползунок прогресса //
     let trackLine = document.getElementById('widget_track_line');
-
     trackLine.addEventListener('input', function() {
-        changeProgressLine();
+        let currentSec = audioControls.audio.duration * this.value / 100;
+        // timer update
+        min = parseInt(currentSec / 60);
+        sec = parseInt(currentSec % 60);
+        
+        audioControls.audio.currentTime = currentSec;
+        audioControls.trackPrevLine.style.width = (audioControls.trackLine.value * 5.8) + "px";
     });
+
 });
 
 var sec = 0;
 var min = 0;
 
 function add() {
-    let timerShow = document.getElementById('widget_time');
-    sec++;
+    sec += 0.1;
     if (sec >= 60) {
         sec = 0;
         min++;
@@ -211,7 +253,7 @@ function add() {
         }
     }
     changeProgressLine();
-    timerShow.textContent = (min > 9 ? min : "0" + min) + ":" + (sec > 9 ? sec : "0" + sec);
+    audioControls.timerShow.textContent = (min > 9 ? min : "0" + min) + ":" + (sec > 9 ? Math.ceil(sec) : "0" + Math.ceil(sec));
 }
 
 
@@ -219,15 +261,14 @@ let t;
 function stopwatch(value) {
     switch (value) {
         case 'play' :
-            t = setInterval(add, 1000);
+            t = setInterval(add, 100);
             break;
         case 'pause' :
             clearInterval(t);
             break;
         case 'reset' :
-            let timerShow = document.getElementById('widget_time');
             clearInterval(t);
-            timerShow.textContent = "00:00";
+            audioControls.timerShow.textContent = "00:00";
             sec = 0; min = 0;
             break;
         default:
@@ -236,21 +277,6 @@ function stopwatch(value) {
 }
 
 function changeProgressLine() {
-    let audioObj = document.getElementById('player_window');
-    // let maxMin = parseInt(audioObj.duration / 60);
-    // let maxSec = parseInt(audioObj.duration % 60);
-    let leftOfTheThumb = document.getElementById("track_line");
-    let trackLine = document.getElementById('widget_track_line');
-
-    trackLine.step = 100 / audioObj.duration;
-    let currentSec = audioObj.duration * trackLine.value / 100;
-    if (audioObj.play()) {
-        trackLine.value++;
-        audioObj.currentTime = currentSec;
-    } 
-
-    leftOfTheThumb.style.width = (trackLine.value * 5.8) + "px";
-    min = parseInt(currentSec / 60);
-    sec = parseInt(currentSec % 60);
-    
+    audioControls.trackLine.value = parseFloat(audioControls.trackLine.value) + 10 / audioControls.audio.duration; 
+    audioControls.trackPrevLine.style.width = (audioControls.trackLine.value * 5.8) + "px";
 }

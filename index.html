@@ -24,6 +24,7 @@
     <div id="player">
         <h1 id="source"></h1>
         <div id="widget_player">
+            <div id="loader"></div>
             <button id="widget_play">
                 <svg id="play_pause" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path class="path_play" d="M0 40V0H4.34286L40 18.7952V20.9639L4.34286 40H0Z" fill="white"/>
@@ -32,9 +33,8 @@
                 </svg>                      
             </button>
             <div id="audio_track">
-                <input type="range" min="0" max="100" value="0" id="widget_track_line">
+                <input type="range" min="0" max="100" value="0" step="any" id="widget_track_line">
                 <div id="track_line" style="width: 0px;"></div>
-                <!-- <div id="widget_progress"></div> -->
             </div>
             <div id="widget_time_volume">
                 <div id="widget_time">00:00</div>
