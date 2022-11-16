@@ -1,0 +1,29 @@
+.but_error {
+    margin: 36px 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    border-radius: 0%;
+    border: none;
+    padding: 0px;
+    background-color: #fff;
+}
+
+.input-err {
+    margin: 32px 0px 32px 16px;
+    width: 729px;
+}
+
+.str_error {
+    position: absolute;
+    top: 167px;
+    width: 793px;
+    height: 16px;
+    color: var(--str_error);
+
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.3px;
+}

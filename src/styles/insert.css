@@ -1,0 +1,90 @@
+#main {
+    display: flex;
+    flex-direction: column;
+    
+    margin: auto;
+    top: 50%;
+    width: 889px;
+    height: 162px;
+    position: relative;
+
+    padding: 0px;
+}
+
+#head {
+    position: absolute;
+    display: flex;
+    margin: 0px;
+    height: 52px;
+    width: 520px;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 52px;
+
+    letter-spacing: -1px;
+
+    color: var(--font_color);
+}
+
+.insert {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+
+    position: absolute;
+    width: 889px;
+    height: 96px;
+    left: 0px;
+    bottom: 0px;
+}
+
+#input_place {
+    background-color: var(--white);
+    padding: 0px;
+    width: 793px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+}
+
+.input-base {
+    flex-grow: 1;
+    border: none;
+    height: 32px;
+    font-family: var(--font);
+    outline:none;
+    color: var(--font_color);
+
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.4px;
+}
+
+.input-base:-webkit-autofill,
+.input-base:-webkit-autofill:hover, 
+.input-base:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--font_color);
+  -webkit-box-shadow: 0 0 0px 40rem var(--white) inset;
+  box-shadow: 0 0 0px 40rem var(--white) inset;
+}
+
+.input-ok {
+    margin: 32px 16px;
+    min-width: 729px;
+}
+
+#input::-webkit-input-placeholder { color: var(--placeholder); }
+
+#submit {
+    width: 96px;
+    height: 96px;
+    border-radius: 0%;
+    border: none;
+    padding: 0px;
+    background-color: var(--yellow);
+}

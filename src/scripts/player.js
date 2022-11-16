@@ -1,8 +1,10 @@
 let audioControls = {
     audio:          null,
+    volume:         null,
     timerShow:      null,
     trackLine:      null,
     trackPrevLine:  null,
+    flag:           true,
 };
 
 function changeDisplay(id, opened) {
@@ -27,12 +29,15 @@ function addErrorElement(audioObj) {
 }
 
 function onSubmit() {
+    // создание объекта Audio //
     let linkAudio = document.getElementById('input');
     let audioObj = new Audio(linkAudio.value);
+    
+    // установка громкости по умолчанию //
     audioObj.volume = "0.4";
     
     // если ссылка валидная //
-    audioObj.addEventListener('canplay', function() {
+    audioObj.addEventListener('canplay', () => {
         let player = document.getElementById('player');
         let source = document.getElementById('source');
         let widgetPlayer = document.getElementById('widget_player');
@@ -57,8 +62,6 @@ function onSubmit() {
         player.insertBefore(audioObj, widgetPlayer);
         audioControls.audio = audioObj;
         
-        // установка громкости по умолчанию //
-        
         // если это радио //
         if (audioControls.audio.duration == "Infinity") {
             audioControls.trackLine.setAttribute("disabled", "");
@@ -74,7 +77,12 @@ function onSubmit() {
         changeDisplay('#loader', false);
         audioObj.addEventListener('waiting', function() {
             changeDisplay('#loader', true);
+            stopwatch("pause");
+            audioControls.flag = false;
         });
+        if (!audioControls.flag && audioObj.duration != "Infinity") { 
+            stopwatch("play");
+        }
 
         // если воспроизведение музыки закончилось //
         audioObj.addEventListener('ended', function() {
@@ -148,96 +156,99 @@ function onSubmit() {
             addErrorElement(audioObj);
         }, false);
 }
+
+function playBtn() {
+    if (audioControls.audio.paused) { // включение аудио
+        changeDisplay('.rect_pause', true);
+        changeDisplay('.rect_pause2', true);
+        changeDisplay('.path_play', false);
+        audioControls.audio.play();
+        stopwatch("play");
+    }
+    else { // выключение аудио
+        changeDisplay('.rect_pause', false);
+        changeDisplay('.rect_pause2', false);
+        changeDisplay('.path_play', true);
+        audioControls.audio.pause();
+        stopwatch("pause");
+    }
+}
+
+function errorHiding() {
+    if (this.classList.contains("input-err")) {
+        this.classList.remove("input-err");
+        this.classList.add("input-ok");
+        let butError = document.querySelector(".but_error");
+        let strError = document.querySelector(".str_error");
+        butError.remove();
+        strError.remove();
+    }
+}
+
+function backButton() {
+    audioControls.audio.remove();
+    changeDisplay('#main', true);
+    changeDisplay('#player', false);
+    if (!audioControls.audio.pause()) {
+        changeDisplay('.rect_pause', false);
+        changeDisplay('.rect_pause2', false);
+        changeDisplay('.path_play', true);
+        audioControls.audio.pause();
+    }
+    stopwatch("reset");
+    audioControls.trackPrevLine.style.width = "0px";
+    audioControls.trackLine.value = "0";
+    let volumeRange = document.getElementById("widget_volume");
+    let leftOfThumb = document.getElementById("volume_line");
+    volumeRange.value = "40";
+    leftOfThumb.style.width = (volumeRange.value * 2.52) + "px";
+    audioControls.audio = null;
+    delete audioControls.audio;
+}
+
+function inputVolume() {
+    let leftOfThumb = document.getElementById("volume_line");
+
+        audioControls.audio.volume = this.value / 100;
+        leftOfThumb.style.width = (audioControls.volume.value * 2.52) + "px";
+}
+
+function inputTrackLine() {
+    let currentSec = audioControls.audio.duration * this.value / 100;
+    // timer update
+    min = parseInt(currentSec / 60);
+    sec = parseInt(currentSec % 60);
+    
+    audioControls.audio.currentTime = currentSec;
+    audioControls.trackPrevLine.style.width = (audioControls.trackLine.value * 5.8) + "px";
+}
     
 // начало загрузки страницы //
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM loaded");
-    console.log("https://c5.radioboss.fm:18084/stream");
-    console.log("https://lalalai.s3.us-west-2.amazonaws.com/media/split/a7564eb8-cbf2-40e2-9cb8-6061d8d055a7/no_vocals");
-    
+    // кнопка submit //
     let submitBtn = document.getElementById('submit');
     submitBtn.addEventListener('click', onSubmit);
     
     // скрытие отображения ошибки при новом вводе //
     let input_url = document.getElementById('input');
-    
-    input_url.addEventListener('input', function() {
-        if (this.classList.contains("input-err")) {
-            this.classList.remove("input-err");
-            this.classList.add("input-ok");
-            let butError = document.querySelector(".but_error");
-            let strError = document.querySelector(".str_error");
-            butError.remove();
-            strError.remove();
-        }
-    });    
+    input_url.addEventListener('input', errorHiding);    
 
     // реализация плеера //
     let widgetPlayBtn = document.getElementById('widget_play');
-
-    widgetPlayBtn.addEventListener('click', function() { // кнопка play
-        if (audioControls.audio.paused) { // включение аудио
-            changeDisplay('.rect_pause', true);
-            changeDisplay('.rect_pause2', true);
-            changeDisplay('.path_play', false);
-            audioControls.audio.play();
-            stopwatch("play");
-        }
-        else { // выключение аудио
-            changeDisplay('.rect_pause', false);
-            changeDisplay('.rect_pause2', false);
-            changeDisplay('.path_play', true);
-            audioControls.audio.pause();
-            stopwatch("pause");
-        }
-    });
+    widgetPlayBtn.addEventListener('click', playBtn);
 
     // кнопка назад //
     let backBtn = document.getElementById('back');
-    
-    backBtn.addEventListener('click', function() {
-        audioControls.audio.remove();
-        changeDisplay('#main', true);
-        changeDisplay('#player', false);
-        if (!audioControls.audio.pause()) {
-            changeDisplay('.rect_pause', false);
-            changeDisplay('.rect_pause2', false);
-            changeDisplay('.path_play', true);
-            audioControls.audio.pause();
-        }
-        stopwatch("reset");
-        audioControls.trackPrevLine.style.width = "0px";
-        audioControls.trackLine.value = "0";
-        let volumeRange = document.getElementById("widget_volume");
-        let leftOfThumb = document.getElementById("volume_line");
-        volumeRange.value = "40";
-        leftOfThumb.style.width = (volumeRange.value * 2.52) + "px";
-        audioControls.audio = null;
-        delete audioControls.audio;
-    });
+    backBtn.addEventListener('click', backButton);
 
     // громкость //
     let volumeRange = document.getElementById("widget_volume");
-
-    volumeRange.addEventListener('input', function() {
-        let leftOfThumb = document.getElementById("volume_line");
-
-        audioControls.audio.volume = this.value / 100;
-        leftOfThumb.style.width = (volumeRange.value * 2.52) + "px";
-    });
+    audioControls.volume = volumeRange;
+    volumeRange.addEventListener('input', inputVolume);
     
     // вручную меняем ползунок прогресса //
     let trackLine = document.getElementById('widget_track_line');
-    trackLine.addEventListener('input', function() {
-        let currentSec = audioControls.audio.duration * this.value / 100;
-        // timer update
-        min = parseInt(currentSec / 60);
-        sec = parseInt(currentSec % 60);
-        
-        audioControls.audio.currentTime = currentSec;
-        audioControls.trackPrevLine.style.width = (audioControls.trackLine.value * 5.8) + "px";
-    });
-
+    trackLine.addEventListener('input', inputTrackLine);
 });
 
 var sec = 0;
@@ -272,7 +283,7 @@ function stopwatch(value) {
             sec = 0; min = 0;
             break;
         default:
-            console.log('Omagad');
+            console.log('Undefined value');
     }
 }
 

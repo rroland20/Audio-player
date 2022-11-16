@@ -1,0 +1,163 @@
+#widget_player {
+    background-color: var(--player_background);
+    position: absolute;
+    top: 53px;
+    left: 0px;
+    margin: 0px;
+    width: 620px;
+    height: 198px;
+}
+
+#widget_play {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    padding: 0px;
+    background-color: var(--player_background);
+
+}
+
+#play_pause {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.path_play {
+    display: flex;
+}
+
+.rect_pause, .rect_pause2 {
+    display: none;
+}
+
+#audio_track {
+    position: absolute;
+    top: 105px;
+    left: 20px;
+    width: 580px;
+    height: 12px;
+    order: 2;
+}
+
+#widget_track_line {
+    -webkit-appearance: none;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 5px;
+    left: 0px;
+    width: 580px;
+    height: 2px;
+    background: var(--track_line);
+}
+
+#widget_track_line::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 12px;
+    background: var(--white);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#widget_track_line::-moz-range-thumb {
+    appearance: none;
+    width: 16px;
+    height: 12px;
+    background: var(--white);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#track_line {
+    position: absolute;
+    top: 7px;
+    left: 2px;
+    height: 2px;
+    background-color: var(--white);
+}
+
+#widget_progress {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 16px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: var(--white);
+}
+
+#widget_time_volume {
+    position: absolute;
+    top: 162px;
+    left: 20px;
+    width: 580px;
+    height: 16px;
+}
+
+#widget_time {
+    position: absolute;
+    top:0px;
+    left: 0px;
+    width: 33px;
+    height: 16px;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.3px;
+    color: var(--font_color);
+}
+
+#widget_volume {
+    -webkit-appearance: none;
+    position: absolute;
+    top: 7px;
+    left: 328px;
+    width: 252px;
+    height: 2px;
+    background-color: var(--white);
+
+}
+
+#widget_volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 12px;
+    background: var(--black);
+    border: none;
+    cursor: pointer;
+}
+
+#widget_volume::-moz-range-thumb {
+    appearance: none;
+    width: 16px;
+    height: 12px;
+    background: var(--black);
+    border: none;
+    cursor: pointer;
+}
+
+#volume_line {
+    position: absolute;
+    top: 9px;
+    left: 330px;
+    height: 2px;
+    background-color: var(--black);
+}
+
+#volume_level {
+    position: absolute;
+    top: 2px;
+    left: 412px;
+    width: 16px;
+    height: 12px;
+    border: none;
+    background-color: var(--black);
+}
