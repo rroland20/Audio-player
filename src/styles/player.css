@@ -78,6 +78,7 @@
     width: 80px;
     height: 32px;
     padding: 0px;
+    cursor: grab;
 
     font-style: normal;
     font-weight: 400;

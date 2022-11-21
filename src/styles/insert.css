@@ -87,4 +87,9 @@
     border: none;
     padding: 0px;
     background-color: var(--yellow);
+    cursor: grab;
+}
+
+#submit:hover {
+    background-color: var(--str_error);
 }
