@@ -1,4 +1,4 @@
-let audioControls = {
+const audioControls = {
     audio:          null,
     volume:         null,
     timerShow:      null,
@@ -7,7 +7,7 @@ let audioControls = {
     flag:           true,
 };
 
-let timerControls = {
+const timerControls = {
     sec:            0,
     min:            0,
     t:              null,
@@ -238,7 +238,7 @@ function add() {
         }
     }
     changeProgressLine();
-    audioControls.timerShow.textContent = (timerControls.min > 9 ? timerControls.min : "0" + timerControls.min) + ":" + (timerControls.sec > 9 ? Math.ceil(timerControls.sec) : "0" + Math.ceil(timerControls.sec));
+    audioControls.timerShow.textContent = (timerControls.min > 9 ? timerControls.min : `0${timerControls.min}`) + ":" + (timerControls.sec > 10 ? Math.floor(timerControls.sec) : `0${Math.floor(timerControls.sec)}`);
 }
 
 function stopwatch(value) {
